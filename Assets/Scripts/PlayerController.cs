@@ -6,11 +6,16 @@ public class PlayerController : MonoBehaviour
 {
     public float speed = 1.0f;
     private Rigidbody rb;
+    private int pickupCount;
 
     void Start()
     {
         // Gets the rigidbody component attached to this game object
         rb = GetComponent<Rigidbody>();
+        //Gets the number of pickups in our scene
+        pickupCount = GameObject.FindGameObjectsWithTag("Pickup").Length;
+        //Run the check pickups function
+        CheckPickups();
     }
 
     void FixedUpdate()
@@ -26,4 +31,31 @@ public class PlayerController : MonoBehaviour
         //Add force to our rigidbody from our movement vector * speed variable
         rb.AddForce(movement * speed * Time.deltaTime);
     }
-}
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Pickup"))
+        {
+            //Destroy the collided object
+            Destroy(other.gameObject);
+            //Decrement the pickup count
+            pickupCount--;
+            //Run the check pickups function
+            CheckPickups();
+        }
+    }
+
+    private void CheckPickups()
+    {
+        print("Pickups left: " + pickupCount);
+        if(pickupCount == 0)
+        {
+            WinGame();
+        }
+    }
+
+    private void WinGame()
+    {
+        print("Yay! You Win");
+    }
+} 
